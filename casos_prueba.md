@@ -100,13 +100,13 @@ El programa no comprueba antes si `socios` es `0`, así que intenta dividir entr
 Ingresamos `meses=-1` y el programa lo aceptó como si fuera un valor normal. Después mostró `$20.00` de intereses, `$1020.00` de total y `$510.00` de cuota por socio.
 
 **Defecto encontrado:**  
-El dato de los meses se recibe en la **línea 6**:
+Después de la **línea 6**, donde se recibe el valor de `meses`, no existe una validación que compruebe que sea mayor que cero:
 
 ```python
 meses = int(input("Ingrese los meses de inversión: "))
 ```
 
-Después de recibirlo no existe una validación que compruebe que el valor sea mayor que cero. Además, más adelante el programa eleva los meses al cuadrado, por lo que `-1` termina convirtiéndose en un valor positivo dentro del cálculo.
+La línea 6 no es incorrecta por sí sola; el problema es que el programa continúa sin validar el dato ingresado. Por eso acepta `meses=-1`. Además, más adelante los meses se elevan al cuadrado, así que `-1` termina convirtiéndose en un valor positivo dentro del cálculo.
 
 ---
 
@@ -116,6 +116,6 @@ Después de recibirlo no existe una validación que compruebe que el valor sea m
 |---|---|---:|---|
 | **CP-01** | Los intereses son mayores a los esperados | **10** | Se usa `(meses ** 2)` en el cálculo |
 | **CP-02** | El programa se cierra con `socios=0` | **13** | Se divide entre `socios` sin validar que sea distinto de cero |
-| **CP-03** | El programa acepta meses negativos | **6** | Se recibe el valor de `meses` sin una validación posterior |
+| **CP-03** | El programa acepta meses negativos | **6 (después de esta línea)** | Falta validar que `meses` sea mayor que cero después de recibir el dato |
 
 Con esto dejamos registrados los fallos que observamos y la parte del código relacionada con cada uno. El archivo original se mantiene sin corregir para conservar la evidencia del ejercicio.
