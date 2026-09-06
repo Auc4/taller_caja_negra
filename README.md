@@ -2,11 +2,14 @@
 
 Repositorio del taller de **Pruebas de Caja Negra** realizado por **Sebastián Aucapiña** y **Bryan Montaguano**.
 
-## Archivos del proyecto
+## Estructura del proyecto
 
-- `presupuesto_analisis.py`: código base entregado para realizar las pruebas.
-- `casos_prueba.md`: mapa conceptual, casos de prueba y resultados de las actividades.
-- `mapa_conceptual.png`: mapa conceptual realizado para la Actividad 1.
+```bash
+|- presupuesto_analisis.py # Código entregado para realizar las pruebas.
+|- casos_prueba.md # Imagen del mapa conceptual, casos de prueba y resultados de las actividades.
+|-- Media/
+|-- Mapa_Conceptual.png # Mapa conceptual realizado para la Actividad 1.
+```
 
 ---
 
@@ -16,18 +19,18 @@ Repositorio del taller de **Pruebas de Caja Negra** realizado por **Sebastián A
 
 **¿Puede existir un defecto en el código durante años sin llegar a causar un fallo?**
 
-Sí. Un defecto puede quedarse en el código durante mucho tiempo sin que nadie lo note si nunca se ejecuta la parte del programa donde está o si no se presentan las condiciones necesarias para que se manifieste.
+Si, un defecto puede estar presente en el código durante mucho tiempo y nadie lo notará debido a que no se presentan las condiciones necesarias para que se manifieste. 
 
-Por ejemplo, un error relacionado con un valor muy poco común podría permanecer oculto mientras los usuarios nunca ingresen ese dato. El defecto sigue existiendo, pero el fallo solo aparece cuando el programa se ejecuta bajo una condición que lo activa.
+Por ejemplo, el caso de *shellshock* con el ínterprete *bash* es un ejemplo de un defecto que se presentó durante varios años; esto se debe a una falta de control de límites dentro del programa. Permaneció oculto desde 1989 hasta 2014. 
 
-Por eso las pruebas pueden demostrar que existen defectos cuando los encuentran, pero no pueden garantizar que un programa esté completamente libre de ellos.
+El defecto se mantuvo durante mucho tiempo, pero el fallo solo aparece cuando el programa se ejecuta bajo una condición que lo activa.
+
 
 ### Desafío lógico 2
 
 **Si el programa funciona correctamente, pero el cliente necesitaba un sistema de nóminas y no uno de presupuestos, ¿qué principio se estaría incumpliendo?**
 
-Se estaría incumpliendo la **falacia de ausencia de errores**.
+Se estaría incumpliendo el principio de **falacia de ausencia de errores**.
 
-Aunque el programa no tenga fallos técnicos y todos sus cálculos funcionen bien, no sirve como solución si no responde a la necesidad real del usuario. En este caso se construyó correctamente un sistema de presupuestos, pero el cliente necesitaba otra cosa.
+Esto indica que, aunque el programa no presente fallos visibles y su funcionamiento sea correcto, no sirve como solución si no responde a la necesidad real del usuario. En este caso se construyó correctamente un sistema de presupuestos, pero el cliente necesitaba otra cosa.
 
-Esto también muestra la diferencia entre hacer que un programa funcione bien y asegurarse de que realmente sea el producto que el usuario necesita.

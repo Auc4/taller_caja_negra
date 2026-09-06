@@ -18,33 +18,25 @@
 
 Realizamos un mapa conceptual sobre **QA, QC y Testing**, los **7 principios de ISTQB** y la relación **Error → Defecto → Fallo**.
 
-![Mapa conceptual](mapa_conceptual.png)
-
-También dejamos el archivo original del mapa por si se necesita revisar:
-
-[Ver mapa conceptual en Google Drive](https://drive.google.com/file/d/10zU0H-B_1V8JXdKSbsW8ImlpdFSi0mMe/view?usp=sharing)
+![Mapa conceptual](media/Mapa_Conceptual.png)
 
 ---
 
 ## Actividad 2 - Código base
 
-Guardamos el archivo `presupuesto_analisis.py` y comprobamos que el programa inicia y permite ingresar los datos.
-
-En esta etapa no corregimos el código. La idea era mantenerlo como fue entregado para después diseñar las pruebas y localizar los defectos.
+Generamos el archivo [`presupuesto_analisis.py`](presupuesto_analisis.py) y comprobamos que el programa inicia y permite ingresar los datos.
 
 ---
 
 ## Actividad 3 - Diseño de los casos de prueba
 
-Antes de ejecutar el programa planteamos tres casos de prueba usando **partición de equivalencia** y **valores límite**.
-
-La tabla ya aparece completa porque las columnas **Real** y **Estado** se llenaron después, durante la Actividad 4.
+Antes de ejecutar el programa planteamos tres casos de prueba aplicando la **partición de equivalencia** y **valores límite**.
 
 | ID | Descripción | Precondición | Entrada | Esperado | Real | Estado |
 |---|---|---|---|---|---|---|
-| **CP-01** | Probar el programa con datos normales | Programa iniciado y listo para recibir datos | `presupuesto=1000`, `socios=2`, `meses=2` | El programa debería calcular `$40.00` de intereses, un total de `$1040.00` y una cuota de `$520.00` por socio. | El programa calculó `$80.00` de intereses, un total de `$1080.00` y una cuota de `$540.00` por socio. | **Failed** |
+| **CP-01** | Probar el programa con datos válidos | Programa iniciado y listo para recibir datos | `presupuesto=1000`, `socios=2`, `meses=2` | El programa debería calcular `$40.00` de intereses, un total de `$1040.00` y una cuota de `$520.00` por socio. | El programa calculó `$80.00` de intereses, un total de `$1080.00` y una cuota de `$540.00` por socio. | **Failed** |
 | **CP-02** | Probar el límite inválido de socios | Programa iniciado; presupuesto y meses válidos | `presupuesto=1000`, `socios=0`, `meses=2` | El programa debería detectar que no puede trabajar con `0` socios y mostrar un mensaje controlado. | El programa se cerró con `ZeroDivisionError: float division by zero`. | **Failed** |
-| **CP-03** | Probar una cantidad negativa de meses | Programa iniciado; presupuesto y socios válidos | `presupuesto=1000`, `socios=2`, `meses=-1` | El programa debería rechazar el valor negativo y mostrar un mensaje indicando que los meses no son válidos. | El programa aceptó `-1` y realizó el cálculo: intereses `$20.00`, total `$1020.00` y cuota `$510.00`. | **Failed** |
+| **CP-03** | Probar una cantidad negativa de meses | Programa iniciado; presupuesto y socios válidos | `presupuesto=1000`, `socios=2`, `meses=-1` | El programa debería rechazar el valor negativo e indicar que los meses no son válidos. | El programa aceptó `-1` y realizó el cálculo: intereses `$20.00`, total `$1020.00` y cuota `$510.00`. | **Failed** |
 
 ### Técnicas usadas
 
@@ -56,7 +48,7 @@ La tabla ya aparece completa porque las columnas **Real** y **Estado** se llenar
 
 ## Actividad 4 - Ejecución y localización de defectos
 
-Después de ejecutar los tres casos, comparamos lo que esperábamos con lo que realmente hizo el programa. Los tres casos terminaron en **Failed**, pero por motivos diferentes.
+Después de ejecutar los tres casos, analizamos internamente el programa. Los tres casos terminaron en **Failed**, pero por motivos diferentes.
 
 ### CP-01 - Cálculo incorrecto de intereses
 
