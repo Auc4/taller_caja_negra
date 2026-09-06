@@ -16,7 +16,7 @@
 
 ## Actividad 1 - Mapa conceptual
 
-Este es el mapa conceptual que realizamos sobre **QA, QC, Testing**, los **7 principios de ISTQB** y la relación **Error → Defecto → Fallo**.
+Realizamos un mapa conceptual sobre **QA, QC y Testing**, los **7 principios de ISTQB** y la relación **Error → Defecto → Fallo**.
 
 ![Mapa conceptual](mapa_conceptual.png)
 
@@ -30,7 +30,7 @@ También dejamos el archivo original del mapa por si se necesita revisar:
 
 Guardamos el archivo `presupuesto_analisis.py` y comprobamos que el programa inicia y permite ingresar los datos.
 
-En esta parte todavía no corregimos el código, porque primero debíamos diseñar y ejecutar los casos de prueba.
+En esta etapa no corregimos el código. La idea era mantenerlo como fue entregado para después diseñar las pruebas y localizar los defectos.
 
 ---
 
@@ -38,7 +38,7 @@ En esta parte todavía no corregimos el código, porque primero debíamos diseñ
 
 Antes de ejecutar el programa planteamos tres casos de prueba usando **partición de equivalencia** y **valores límite**.
 
-La tabla de abajo ya incluye las columnas **Real** y **Estado** porque fueron completadas después, durante la Actividad 4.
+La tabla ya aparece completa porque las columnas **Real** y **Estado** se llenaron después, durante la Actividad 4.
 
 | ID | Descripción | Precondición | Entrada | Esperado | Real | Estado |
 |---|---|---|---|---|---|---|
@@ -48,15 +48,15 @@ La tabla de abajo ya incluye las columnas **Real** y **Estado** porque fueron co
 
 ### Técnicas usadas
 
-- **CP-01:** partición de equivalencia, usando datos que consideramos normales y válidos.
-- **CP-02:** valor límite, usando `socios=0`, justo debajo del mínimo válido de `1`.
-- **CP-03:** partición de equivalencia con un valor inválido. Para este caso asumimos que una inversión no debería tener una cantidad negativa de meses.
+- **CP-01:** partición de equivalencia, usando datos normales y válidos.
+- **CP-02:** análisis de valores límite, usando `socios=0`, justo por debajo del mínimo válido de `1`.
+- **CP-03:** partición de equivalencia con un valor inválido. En este caso asumimos que una inversión no debería tener una cantidad negativa de meses.
 
 ---
 
 ## Actividad 4 - Ejecución y localización de defectos
 
-Después de ejecutar los tres casos comparamos lo que esperábamos con lo que realmente hizo el programa. Los tres casos terminaron en **Failed**, pero por razones diferentes.
+Después de ejecutar los tres casos, comparamos lo que esperábamos con lo que realmente hizo el programa. Los tres casos terminaron en **Failed**, pero por motivos diferentes.
 
 ### CP-01 - Cálculo incorrecto de intereses
 
@@ -64,64 +64,58 @@ Después de ejecutar los tres casos comparamos lo que esperábamos con lo que re
 Con `presupuesto=1000`, `socios=2` y `meses=2`, esperábamos `$40.00` de intereses, pero el programa mostró `$80.00`.
 
 **Defecto encontrado:**  
-El cálculo está elevando los meses al cuadrado:
+En la **línea 10** se encuentra este cálculo:
 
 ```python
 intereses = presupuesto * tasa_interes_mensual * (meses ** 2)
 ```
 
-En el archivo copiado con el mismo formato del PDF, esta instrucción queda en la **línea 9**.
-
-Al usar `meses ** 2`, para 2 meses el programa usa `4` en el cálculo. Por eso el interés termina siendo mayor al esperado.
+El problema es que los meses se elevan al cuadrado. Para `meses=2`, el programa usa `4` en el cálculo, por eso el interés termina siendo mayor de lo esperado.
 
 ---
 
 ### CP-02 - División entre cero
 
 **Fallo que vimos:**  
-Al ingresar `socios=0`, el programa se detuvo y apareció:
+Al ingresar `socios=0`, el programa se detuvo con este error:
 
 ```text
 ZeroDivisionError: float division by zero
 ```
 
 **Defecto encontrado:**  
-El programa divide el total entre la cantidad de socios sin comprobar antes si el valor es cero:
+En la **línea 13** se realiza la división directamente:
 
 ```python
 cuota_por_socio = total / socios
 ```
 
-En el archivo copiado con el mismo formato del PDF, esta instrucción queda en la **línea 12**.
-
-Antes de hacer esta división debería existir una validación para evitar que `socios` sea `0` o un valor inválido.
+El programa no comprueba antes si `socios` es `0`, así que intenta dividir entre cero y se detiene.
 
 ---
 
 ### CP-03 - Se aceptan meses negativos
 
 **Fallo que vimos:**  
-Ingresamos `meses=-1` y el programa lo aceptó como si fuera un valor normal. Incluso mostró un interés positivo de `$20.00`.
+Ingresamos `meses=-1` y el programa lo aceptó como si fuera un valor normal. Después mostró `$20.00` de intereses, `$1020.00` de total y `$510.00` de cuota por socio.
 
 **Defecto encontrado:**  
-El valor de `meses` se recibe directamente:
+El dato de los meses se recibe en la **línea 6**:
 
 ```python
 meses = int(input("Ingrese los meses de inversión: "))
 ```
 
-En el archivo copiado con el mismo formato del PDF, esta instrucción queda en la **línea 5**.
-
-Después de recibir este dato no existe una validación que compruebe que los meses sean mayores que cero. Además, como más adelante los meses se elevan al cuadrado, `-1` termina convirtiéndose en un valor positivo para el cálculo.
+Después de recibirlo no existe una validación que compruebe que el valor sea mayor que cero. Además, más adelante el programa eleva los meses al cuadrado, por lo que `-1` termina convirtiéndose en un valor positivo dentro del cálculo.
 
 ---
 
 ## Resumen de la Actividad 4
 
-| Caso | Fallo encontrado | Defecto relacionado |
-|---|---|---|
-| **CP-01** | Los intereses calculados son mayores a los esperados | Se usa `(meses ** 2)` en el cálculo de intereses |
-| **CP-02** | El programa se cierra cuando hay `0` socios | Se divide entre `socios` sin validar que sea diferente de cero |
-| **CP-03** | El programa acepta meses negativos | No se valida el valor de `meses` después de ingresarlo |
+| Caso | Fallo encontrado | Línea relacionada | Defecto |
+|---|---|---:|---|
+| **CP-01** | Los intereses son mayores a los esperados | **10** | Se usa `(meses ** 2)` en el cálculo |
+| **CP-02** | El programa se cierra con `socios=0` | **13** | Se divide entre `socios` sin validar que sea distinto de cero |
+| **CP-03** | El programa acepta meses negativos | **6** | Se recibe el valor de `meses` sin una validación posterior |
 
-Hasta esta actividad únicamente identificamos y documentamos los fallos y sus causas. No modificamos todavía el código original.
+Con esto dejamos registrados los fallos que observamos y la parte del código relacionada con cada uno. El archivo original se mantiene sin corregir para conservar la evidencia del ejercicio.
