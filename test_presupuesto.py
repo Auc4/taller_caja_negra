@@ -11,3 +11,11 @@ def test_calculo_normal():
     assert intereses == 80.0
     assert total == 1080.0
     assert cuota == 540.0
+
+
+def test_calculo_sabotaje():
+    intereses, total, cuota = calcular_presupuesto(
+        1000.0,
+        0,
+        2
+    )
