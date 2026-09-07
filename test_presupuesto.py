@@ -1,13 +1,13 @@
-from presupuesto import calcular_presupuesto
+from presupuesto_analisis import calcular_presupuesto
 
 def test_calculo_normal():
-
     intereses, total, cuota = calcular_presupuesto(
-        1000,
+        1000.0,
         2,
         2
     )
 
-    assert intereses == 40
-    assert total == 1040
-    assert cuota == 520
+    # 1000 * 0.02 * (2**2) = 80.0
+    assert intereses == 80.0
+    assert total == 1080.0
+    assert cuota == 540.0
