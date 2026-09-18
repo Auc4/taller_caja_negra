@@ -27,12 +27,11 @@ En las pruebas de software existen distintos niveles. Cada uno revisa una parte 
 
 ## 1.2 Diferencia entre *Component Integration Testing* y *System Integration Testing*
 
-La principal diferencia está en **qué elementos se están conectando**.
+ La diferencia principal entre ambos está en los elementos que se conectan.
+ - **Component Integration Testing:** comprueba la comunicación entre componentes que forman parte del mismo sistema. Por ejemplo, se puede verificar que el módulo que calcula el puntaje crediticio envíe correctamente el resultado al módulo encargado de aprobar o rechazar la solicitud.
+- **System Integration Testing:** comprueba la comunicación entre el sistema y otros sistemas externos. Un ejemplo sería verificar que el sistema bancario pueda comunicarse correctamente con un buró de crédito o con otro servicio externo.
 
-- **Component Integration Testing:** revisa la comunicación entre componentes que pertenecen al mismo sistema. Por ejemplo, comprobar que un módulo que calcula el puntaje crediticio envíe correctamente el resultado al módulo que toma la decisión de aprobación.
-- **System Integration Testing:** revisa la comunicación entre el sistema y otros sistemas externos. Por ejemplo, verificar que el sistema bancario pueda conectarse correctamente con un buró de crédito o con otro servicio externo.
-
-En resumen, el primero se enfoca en componentes internos y el segundo en la integración con sistemas externos [2].
+En pocas palabras, el primero se centra en la comunicación entre componentes internos, mientras que el segundo revisa la integración con sistemas externos [2].
 
 ---
 
@@ -40,22 +39,17 @@ En resumen, el primero se enfoca en componentes internos y el segundo en la inte
 
 ## 2.1 ¿Por qué Big-Bang es una estrategia riesgosa?
 
-En el enfoque **Big-Bang**, los módulos se desarrollan y se prueban por separado, pero al final se integran todos al mismo tiempo [3], [4]. Esto puede generar varios problemas:
+El enfoque Big-Bang consiste en desarrollar y probar los módulos por separado para después integrarlos todos al mismo tiempo [3] [4]. El problema de hacerlo de esta manera es que, cuando algo falla después de la integración, puede ser difícil saber exactamente dónde se originó el problema. 
 
-1. **Es difícil encontrar el origen de un error.** Si muchos módulos se conectan al mismo tiempo y algo falla, puede ser complicado saber cuál de todas las conexiones causó el problema.
-2. **Los errores de comunicación aparecen tarde.** Aunque cada módulo funcione bien por separado, al conectarlos pueden aparecer fallos en datos, formatos, parámetros o secuencias.
-3. **Las correcciones pueden afectar varias partes.** Si el problema aparece al final, corregirlo puede obligar a repetir muchas pruebas y revisar varias partes del sistema.
-
-Por eso, en sistemas medianos o grandes es más seguro integrar poco a poco, ya que cada nuevo componente puede probarse antes de continuar con el siguiente.
+Además, pueden aparecer errores de comunicación entre los módulos, como datos con formatos diferentes, parámetros incorrectos o problemas en el orden de las llamadas. También, si estos errores se encuentran al final, las correcciones pueden requerir repetir varias pruebas. Por estas razones, en sistemas medianos o grandes suele ser conveniente realizar la integración de forma progresiva, comprobando cada componente a medida que se incorpora.
 
 ## 2.2 Verificación en pruebas de sistema y validación en UAT
 
 La diferencia se puede entender de manera sencilla:
 
-- **Verificación:** comprobar que el sistema fue construido de acuerdo con los requisitos y especificaciones.
-- **Validación:** comprobar que el sistema realmente sirve para lo que el usuario o negocio necesita.
+- **Verificación:** La verificación consiste en comprobar que el sistema fue construido de acuerdo con los requisitos y especificaciones establecidos. En cambio, la validación busca comprobar que el sistema realmente responde a las necesidades del usuario o del negocio.
 
-En una **prueba de sistema**, normalmente se verifica que el sistema completo cumpla los requisitos definidos. En una **prueba de aceptación (UAT)**, el usuario o negocio revisa si el sistema funciona de una forma útil y adecuada para su trabajo [2].
+En una **prueba de sistema**, En las pruebas de sistema se comprueba que el sistema completo cumpla los requisitos definidos. En una prueba de aceptación o UAT, el usuario o el área de negocio comprueba si el sistema resulta adecuado para el trabajo que necesita realizar [2].
 
 ### Ejemplo
 
@@ -80,7 +74,7 @@ Un **stub** simula un módulo que todavía no está disponible y que debe ser ll
 
 ## 3.1 Relación de equivalencia aplicada a datos de entrada
 
-La partición de equivalencia sirve para dividir un conjunto grande de datos en grupos que deberían comportarse de forma parecida.
+La partición de equivalencia es un tipo de relación que satisface 3 propiedads fundamentales. Su objetivo es definir una partición dentro de un conjunto dónde los elementos se agrupan en relaciones de equivalencia en función de su similitud e igualdad.
 
 Sea \(D\) el conjunto de posibles datos de entrada. Podemos decir que dos valores \(x\) y \(y\) son equivalentes cuando esperamos que el sistema los trate de la misma manera:
 
@@ -104,8 +98,11 @@ La idea práctica es que no necesitamos probar todos los valores posibles. Podem
 
 ## 3.2 Clases válidas e inválidas
 
-- Una **clase válida** contiene datos que sí cumplen las reglas del sistema.
-- Una **clase inválida** contiene datos que rompen alguna regla y deberían generar rechazo, error o algún tipo de validación.
+Dentro de las definiciones de clases válidas o inválidas se definen: 
+- Una **clase válida** Una clase válida contiene valores que, de acuerdo con la especificación del sistema, deben ser procesados por el objeto de prueba o cuyo procesamiento está definido [2].
+- Una **clase inválida** Una clase inválida contiene valores que, de acuerdo con la especificación, deberían ser ignorados o rechazados por el objeto de prueba, o cuyo procesamiento no está definido [2].
+
+La interpretación de qué valores son válidos o inválidos puede variar según el equipo, la organización o las reglas establecidas en la especificación del sistema.
 
 Por ejemplo, si una edad válida está entre 18 y 75 años:
 
@@ -240,6 +237,21 @@ Por ejemplo, un módulo puede enviar la fecha como `17/09/2026`, mientras otro e
 
 Por esta razón existen diferentes niveles de pruebas. Las pruebas unitarias revisan cada parte de forma aislada, mientras que las pruebas de integración revisan si esas partes realmente funcionan correctamente cuando se comunican entre sí [1], [2].
 
+
+Que todas las pruebas unitarias pasen significa que cada componente funcionó correctamente por separado. Sin embargo, cuando los componentes se conectan pueden aparecer errores que no existían durante las pruebas individuales.
+
+Algunos ejemplos son:
+
+- Un servicio devuelve un código de respuesta diferente al que espera el sistema que lo consume.
+- Un componente envía información incompleta y el otro necesita datos adicionales.
+- Los módulos manejan de manera diferente los valores nulos o vacíos.
+- Una función puede ejecutarse correctamente de forma individual, pero fallar cuando depende de otro servicio.
+- Un sistema puede procesar correctamente una solicitud, pero otro componente puede rechazarla debido a permisos o autenticación.
+- Dos componentes funcionan correctamente por separado, pero generan resultados incorrectos cuando comparten información.
+
+Por ejemplo, un sistema puede enviar un precio como 19.99, mientras otro componente espera recibir el valor en centavos, como 1999. Ambos podrían pasar sus pruebas unitarias, pero al conectarlos el precio podría procesarse de manera incorrecta.
+
+Por esta razón existen diferentes niveles de pruebas. Las pruebas unitarias revisan cada parte de forma aislada, mientras que las pruebas de integración revisan si esas partes realmente funcionan correctamente cuando se comunican entre sí [1], [2].
 ---
 
 # Bibliografía
@@ -253,5 +265,3 @@ Por esta razón existen diferentes niveles de pruebas. Las pruebas unitarias rev
 [4] R. S. Pressman and B. R. Maxim, **Software Engineering: A Practitioner’s Approach**, 9th ed. New York, NY, USA: McGraw-Hill, 2020.
 
 [5] P. C. Jorgensen, **Software Testing: A Craftsman’s Approach**, 4th ed. Boca Raton, FL, USA: CRC Press, 2013.
-
-[6] ISO/IEC/IEEE, **ISO/IEC/IEEE 29119-2:2021, Software and systems engineering—Software testing—Part 2: Test processes**, 2nd ed. Geneva, Switzerland: International Organization for Standardization, 2021. [Online]. Available: https://www.iso.org/standard/79428.html. [Accessed: Sep. 14, 2026].
