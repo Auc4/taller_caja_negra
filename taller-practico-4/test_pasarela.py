@@ -48,3 +48,17 @@ def test_total_correcto(caso):
 @pytest.mark.parametrize("caso", todos_los_casos())
 def test_moneda_coherente_con_el_pais(caso):
     assert caso["Moneda"] == MONEDA_ESPERADA[caso["Pais"]]
+
+def test_regla_negativa_billetera_laptop():
+    """Verifica que una combinacion prohibida por R3 sea rechazada."""
+    resultado = procesar_pago(
+        dispositivo="Laptop",
+        pais="Ecuador",
+        metodo="Billetera",
+        moneda="USD",
+        envio="Estandar",
+        cupon="Ninguno",
+        monto=50,
+    )
+    assert resultado["estado"] == "RECHAZADO"
+    assert resultado["total"] == 0.0

@@ -25,7 +25,5 @@ def procesar_pago(dispositivo, pais, metodo, moneda, envio, cupon, monto):
 
     # Calculo del total
     descuento = DESCUENTO[cupon]
-    if cupon == "Bienvenida" and envio == "Express":
-        descuento = 0.00  # BUG escondido: el cupon se pierde con envio Express
     total = round(monto * (1 - descuento) + ENVIO_USD[envio], 2)
     return {"estado": "APROBADO", "total": total}
