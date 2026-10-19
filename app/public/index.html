@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Citas Médicas QA</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('citasApp', () => ({
+        form: { paciente: '', edad: 30, tieneAcudiente: false, medicoId: 'Dr. Gómez', fecha: '', hora: 10, monto: 50 },
+        citas: [],
+        mensaje: null,
+        error: null,
+        async cargarCitas() {
+          const res = await fetch('/api/citas');
+          this.citas = await res.json();
+        },
+        async agendar() {
+          this.error = null;
+          this.mensaje = null;
+          const res = await fetch('/api/citas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.form),
+          });
+          const data = await res.json();
+          if (!res.ok) this.error = data.error;
+          else {
+            this.mensaje = data.mensaje;
+            await this.cargarCitas();
+          }
+        },
+        async cancelar(id) {
+          const res = await fetch(`/api/citas/${id}`, { method: 'DELETE' });
+          const data = await res.json();
+          if (!res.ok) this.error = data.error;
+          else this.mensaje = `${data.mensaje}. Penalización aplicada: $${data.penalizacion}`;
+          await this.cargarCitas();
+        },
+      }));
+    });
+  </script>
+</head>
+<body>
+  <main x-data="citasApp" x-init="cargarCitas()">
+    <h1>Sistema de Citas Médico Familiar</h1>
+    <p class="sub">Auditado con McCabe V(G) y Cobertura de Ramas</p>
+
+    <section class="card">
+      <h2>Agendar cita</h2>
+      <form @submit.prevent="agendar()">
+        <label>Paciente <input type="text" x-model="form.paciente" required /></label>
+        <label>Edad <input type="number" x-model.number="form.edad" min="0" required /></label>
+        <label class="check">
+          <input type="checkbox" x-model="form.tieneAcudiente" /> ¿Viene con acudiente?
+        </label>
+        <label>Médico
+          <select x-model="form.medicoId">
+            <option>Dr. Gómez</option>
+            <option>Dra. Ruiz</option>
+            <option>Dr. Vera</option>
+          </select>
+        </label>
+        <label>Fecha <input type="date" x-model="form.fecha" required /></label>
+        <label>Hora (0-23) <input type="number" x-model.number="form.hora" min="0" max="23" required /></label>
+        <label>Monto ($) <input type="number" x-model.number="form.monto" min="0" /></label>
+        <button type="submit">Agendar</button>
+      </form>
+      <p x-show="mensaje" class="ok" x-text="mensaje"></p>
+      <p x-show="error" class="err" x-text="error"></p>
+    </section>
+
+    <section class="card">
+      <h2>Citas agendadas</h2>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Paciente</th><th>Médico</th><th>Fecha</th><th>Hora</th><th></th></tr>
+        </thead>
+        <tbody>
+          <template x-for="cita in citas" :key="cita.id">
+            <tr>
+              <td x-text="cita.id"></td>
+              <td x-text="cita.paciente"></td>
+              <td x-text="cita.medicoId"></td>
+              <td x-text="cita.fecha"></td>
+              <td x-text="cita.hora + ':00'"></td>
+              <td><button class="danger" @click="cancelar(cita.id)">Cancelar</button></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <p x-show="citas.length === 0">No hay citas agendadas.</p>
+    </section>
+  </main>
+</body>
+</html>
