@@ -11,7 +11,7 @@ matemáticamente con la **Complejidad Ciclomática de McCabe V(G)** y un
 | --- | --- | --- | --- | --- | --- |
 | 1 | Regla de Edad (pediátrico vs. adulto) | `validarEdad` | 2 | 3 | 3 |
 | 2 | Restricción de Horarios (Lun–Vie, 08:00–17:00) | `validarHorario` | 3 | 4 | 4 |
-| 3 | Choque de Citas (doble reserva) | `hayChoque` | 3 | 4 | 4 |
+| 3 | Choque de Citas (doble reserva) | `hayChoque` | 2 | 3 | 3 |
 | 4 | Penalización Tardía (menos de 24 h, salvo emergencia) | `calcularPenalizacion` | 2 | 3 | 3 |
 
 ## Framework del QA Aumentado

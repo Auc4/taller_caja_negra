@@ -63,6 +63,7 @@ app.post('/api/citas', (req, res) => {
        VALUES (?, ?, ?, ?, ?, ?, ?)`
     )
     .run(paciente, edad, tieneAcudiente ? 1 : 0, medicoId, fecha, hora, monto ?? 0);
+clear
 
   res.status(201).json({ id: info.lastInsertRowid, mensaje: 'Cita agendada' });
 });
