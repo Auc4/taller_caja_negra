@@ -4,6 +4,10 @@ Segunda etapa del proyecto: migrar el backend de Node.js/Express a **Java 17**
 manteniendo el **mismo contrato de API**, de modo que la interfaz existente en
 `app/public` funcione sin cambios.
 
+**Estrategia:** migración **incremental** con el patrón **Strangler Fig** — el
+backend Java convive con el original y lo reemplaza por completo solo cuando pasa
+todas las pruebas.
+
 ## Requisitos
 
 - Java 17 (JDK)
@@ -40,17 +44,18 @@ app_java/
 
 ## Plan de migración
 
-1. La versión Node en `app/` se conserva como referencia; `app_java` es un proyecto Maven independiente.
-2. El contrato de la API se mantiene idéntico: `GET /api/citas`, `POST /api/citas`, `DELETE /api/citas/:id`, con los mismos códigos de estado (400, 409, 404, 422, 201).
-3. Las reglas de negocio se trasladan de `citasLogic.js` a `CitasLogic.java`, con los mismos predicados y los mismos valores de McCabe: V(G) = 3 + 4 + 3 + 3 = 13 caminos.
-4. SQLite en memoria se conserva (jdbc), con la misma tabla `citas`.
-5. `Main.java` (Spark Java) sirve también el frontend desde `../app/public`.
+1. La versión Node en `app/` se conserva como referencia; `app_java` es un proyecto Maven independiente (patrón Strangler Fig: el sistema nuevo no reemplaza al viejo hasta que está validado).
+2. La migración es incremental: primero las reglas de negocio, luego las rutas y la base de datos, verificando cada pieza antes de continuar.
+3. El contrato de la API se mantiene idéntico: `GET /api/citas`, `POST /api/citas`, `DELETE /api/citas/:id`, con los mismos códigos de estado (400, 409, 404, 422, 201).
+4. Las reglas de negocio se trasladan de `citasLogic.js` a `CitasLogic.java`, con los mismos predicados y los mismos valores de McCabe: V(G) = 3 + 4 + 3 + 3 = 13 caminos.
+5. SQLite en memoria se conserva (jdbc), con la misma tabla `citas`.
+6. `Main.java` (Spark Java) sirve también el frontend desde `../app/public`.
 
 ## Plan de pruebas
 
-- **Unitarias (JUnit 5):** 13 tests en `CitasLogicTest`, uno por camino independiente de cada regla.
+- **Unitarias (JUnit 5):** 13 tests en `CitasLogicTest`, uno por camino independiente de cada regla. La suite congeló el comportamiento de la versión Node antes de migrar (characterization tests): lo que pasa ahí es el "oral" que Java debe replicar.
 - **Integración/manual:** con el servidor levantado, agendar, listar y cancelar desde la interfaz; verificar errores de horario, edad, choque y penalización.
-- **Paridad:** enviar los mismos casos a la versión Node y a la Java y comparar respuestas y códigos de estado.
+- **Paridad:** enviar los mismos casos a la versión Node y a la Java y comparar respuestas y códigos de estado (parallel run: ambos sistemas en ejecución con las mismas entradas).
 
 ## Cómo ejecutar
 
